@@ -3,6 +3,7 @@ package com.darshan.tutorial06;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -14,6 +15,8 @@ public class Login extends AppCompatActivity {
 
     EditText login_email,login_password;
     Button btnLogin;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,15 @@ public class Login extends AppCompatActivity {
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
         btnLogin = findViewById(R.id.btnLogin);
+
+        preferences = getSharedPreferences("session", MODE_PRIVATE);
+        editor = preferences.edit();
+        String SharedPref_email = preferences.getString("email","");
+        if(!SharedPref_email.equals("")){
+            Intent intent = new Intent(Login.this,Welcome.class);
+            startActivity(intent);
+            finish();
+        }
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,7 +49,8 @@ public class Login extends AppCompatActivity {
 
                 if(valEmail.equals("admin@gmail.com") && valPassword.equals("admin")){
                     Intent intent = new Intent(Login.this,Welcome.class);
-                    intent.putExtra("userdata",valEmail);
+                    editor.putString("email",login_email.getText().toString().trim());
+                    editor.commit();
                     startActivity(intent);
                     finish();
                     Toast.makeText(Login.this,"Login Successfully", Toast.LENGTH_SHORT).show();
